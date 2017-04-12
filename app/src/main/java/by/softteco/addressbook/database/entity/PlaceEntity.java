@@ -1,15 +1,23 @@
 package by.softteco.addressbook.database.entity;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * Created by kirila on 12.4.17.
  */
-
+@DatabaseTable(tableName = "places")
 public class PlaceEntity {
 
+    @DatabaseField(generatedId = true, columnName = "id")
     private int mId;
+    @DatabaseField(columnName = "name")
     private String mName;
+    @DatabaseField(columnName = "address")
     private String mAddress;
+    @DatabaseField(columnName = "latitude")
     private double mLatitude;
+    @DatabaseField(columnName = "longitude")
     private double mLongitude;
 
     public PlaceEntity() {
