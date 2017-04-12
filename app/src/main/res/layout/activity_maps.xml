@@ -5,9 +5,12 @@
               android:gravity="center"
               android:orientation="vertical">
 
-    <EditText
+    <TextView
+        android:id="@+id/find_location"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_et_height"/>
+        android:layout_height="@dimen/search_et_height"
+        android:padding="@dimen/tv_padding"
+        android:text="@string/find_location"/>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
