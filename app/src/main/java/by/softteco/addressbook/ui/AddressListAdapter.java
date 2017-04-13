@@ -3,7 +3,7 @@ package by.softteco.addressbook.ui;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,24 +23,38 @@ public class AddressListAdapter extends RecyclerView.Adapter<AddressListAdapter.
 
     private List<PlaceEntity> mPlaceEntities;
 
-    private WeakReference<Context> mContext;
+    private WeakReference<Activity> mActivity;
+    private WeakReference<AdapterListener> mListener;
 
-    public AddressListAdapter(List<PlaceEntity> placeEntities, Context context) {
+    public AddressListAdapter(List<PlaceEntity> placeEntities, Activity activity, AdapterListener listener) {
         mPlaceEntities = placeEntities;
-        mContext = new WeakReference<>(context);
+        mActivity = new WeakReference<>(activity);
+        mListener = new WeakReference<>(listener);
     }
 
     @Override
     public AddressListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(mContext.get());
+        LayoutInflater inflater = LayoutInflater.from(mActivity.get());
         View view = inflater.inflate(LAYOUT, parent, false);
         return new AddressListHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(AddressListHolder holder, int position) {
-        PlaceEntity placeEntity = mPlaceEntities.get(position);
+    public void onBindViewHolder(AddressListHolder holder, final int position) {
+        final PlaceEntity placeEntity = mPlaceEntities.get(position);
         holder.bindView(placeEntity);
+        holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.get().itemSelected(placeEntity.getName(), position);
+            }
+        });
+    }
+
+    public void removeAt(int position) {
+        mPlaceEntities.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mPlaceEntities.size());
     }
 
     @Override
@@ -64,4 +78,9 @@ public class AddressListAdapter extends RecyclerView.Adapter<AddressListAdapter.
         }
 
     }
+
+    public interface AdapterListener {
+        void itemSelected(String name, int position);
+    }
+
 }

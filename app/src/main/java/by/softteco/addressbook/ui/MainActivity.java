@@ -1,5 +1,7 @@
 package by.softteco.addressbook.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -17,6 +19,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private final int LAYOUT = R.layout.activity_main;
 
     BottomNavigationView mBottomNavigationView;
+
+    public static Intent newIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        return intent;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

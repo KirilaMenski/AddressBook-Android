@@ -74,12 +74,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         mAutocompleteFragment = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         mAutocompleteFragment.setOnPlaceSelectedListener(onPlaceSelectedListener);
-        //TODO
-//        mAutocompleteFragment.setBoundsBias(new LatLngBounds(
-//                new LatLng(-33.880490, 151.184363),
-//                new LatLng(-33.858754, 151.229596)));
         mAutocompleteFragment.setFilter(new AutocompleteFilter.Builder()
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE).build());
+        AutocompleteFilter autocompleteFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(Place.TYPE_COUNTRY)
+                .setCountry("BY")
+                .build();
+        mAutocompleteFragment.setFilter(autocompleteFilter);
 
         mMapView = (MapView) view.findViewById(R.id.map_view);
         mMapView.setClickable(true);
@@ -109,8 +110,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             placeEntity.setLatitude(place.getLatLng().latitude);
             placeEntity.setLongitude(place.getLatLng().longitude);
             mPlaceEntities.add(placeEntity);
-
-            moveCamera(place.getLatLng());
         }
 
         @Override
@@ -225,6 +224,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     private void moveCamera(LatLng latLng) {
@@ -259,6 +259,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 //                .title(title)
                 .snippet(title)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+        moveCamera(new LatLng(latitude, longitude));
+
     }
 
 }

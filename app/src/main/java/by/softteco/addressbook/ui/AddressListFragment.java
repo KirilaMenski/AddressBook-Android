@@ -19,7 +19,7 @@ import by.softteco.addressbook.database.entity.PlaceEntity;
  * Created by kirila on 13.4.17.
  */
 
-public class AddressListFragment extends Fragment {
+public class AddressListFragment extends Fragment implements ActionDialog.DialogListener, AddressListAdapter.AdapterListener {
 
     private final int LAYOUT = R.layout.fragment_address_list;
 
@@ -49,9 +49,22 @@ public class AddressListFragment extends Fragment {
     }
 
     private void updateRecycler(List<PlaceEntity> placeEntities) {
-        mAddressListAdapter = new AddressListAdapter(placeEntities, getContext());
+        mAddressListAdapter = new AddressListAdapter(placeEntities, getActivity(), this);
         mAddressRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mAddressRecycler.setAdapter(mAddressListAdapter);
     }
 
+    @Override
+    public void delete(String name, int position) {
+        PlaceEntity placeEntity = mPlaceDao.getPlaceByName(name);
+        mPlaceDao.deletePlace(placeEntity);
+        mAddressListAdapter.removeAt(position);
+    }
+
+    @Override
+    public void itemSelected(String name, int position) {
+        ActionDialog dialog = ActionDialog.newInstance(name, position);
+        dialog.setListener(this);
+        dialog.show(getActivity().getSupportFragmentManager(), "dialog");
+    }
 }

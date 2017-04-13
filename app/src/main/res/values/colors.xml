@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tint_color">#bebebe</color>
+    <color name="tint_color_pressed">#a5a5a5</color>
 </resources>
