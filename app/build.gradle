@@ -9,13 +9,36 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
-    buildTypes {
+
+    signingConfigs {
         release {
+            storePassword "1234567"
+            keyAlias 'by.softteco.addressbook.ui'
+            keyPassword "1234567"
+            storeFile file('../android.jks')
+        }
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "-debug"
+            debuggable true
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
             minifyEnabled false
+        }
+        release {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    dexOptions {
+        jumboMode true
     }
 
 }
