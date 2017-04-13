@@ -67,6 +67,19 @@ public class PlaceDaoImpl implements PlaceDao {
     }
 
     @Override
+    public PlaceEntity getPlaceByName(String name) {
+        try {
+            QueryBuilder<PlaceEntity, Integer> queryBuilder = mDao.queryBuilder();
+            queryBuilder.where().eq("name", name);
+            List<PlaceEntity> placeEntities = queryBuilder.query();
+            return (placeEntities.size() > 0) ? placeEntities.get(0) : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public List<PlaceEntity> getAllPlaces() {
         List<PlaceEntity> placeEntities = new ArrayList<>();
         try {

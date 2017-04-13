@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/map"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_map_normal"
+        android:title="@string/map"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/list"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_database_normal"
+        android:title="@string/database"
+        app:showAsAction="ifRoom"/>
+
+</menu>

@@ -3,4 +3,11 @@
     <string name="title_activity_maps">Map</string>
     <string name="you_are_here">You are here</string>
     <string name="find_location">Find Location</string>
+    <string name="add_to_db">Click to save address in database</string>
+    <string name="build_path">Build path</string>
+    <string name="coordinates">Latitude: %1$f; Longitude: %2$f</string>
+    <string name="address_was_saved">Address saved in database!</string>
+    <string name="map">Map</string>
+    <string name="database">Address list</string>
+    <string name="already_in_db">Already in the database</string>
 </resources>

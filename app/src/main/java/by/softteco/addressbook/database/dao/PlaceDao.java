@@ -16,6 +16,8 @@ public interface PlaceDao {
 
     void deletePlace(PlaceEntity placeEntity);
 
+    PlaceEntity getPlaceByName(String name);
+
     List<PlaceEntity> getAllPlaces();
 
 }

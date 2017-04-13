@@ -5,5 +5,7 @@
 
     <dimen name="search_et_height">40dp</dimen>
     <dimen name="tv_padding">10dp</dimen>
+    <dimen name="margin_top">20dp</dimen>
+    <dimen name="tv_size">20sp</dimen>
 
 </resources>
