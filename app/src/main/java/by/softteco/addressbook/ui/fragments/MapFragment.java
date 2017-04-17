@@ -20,11 +20,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,10 +39,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import by.softteco.addressbook.R;
 import by.softteco.addressbook.api.ApiRequest;
-import by.softteco.addressbook.api.response.Route;
+import by.softteco.addressbook.api.response.ResponseObject;
 import by.softteco.addressbook.database.dao.PlaceDao;
 import by.softteco.addressbook.database.daoimpl.PlaceDaoImpl;
 import by.softteco.addressbook.database.entity.PlaceEntity;
+import by.softteco.addressbook.utils.DecodePolylines;
 import rx.Observable;
 import rx.Observer;
 
@@ -48,6 +51,9 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final int LAYOUT = R.layout.fragment_map;
+
+    private static final String TAG = MapFragment.class.getSimpleName();
+
     private final int INTERVAL = 5000;
     private final int FASTEST_INTERVAL = 3000;
     private final int ZOOM = 17;
@@ -210,29 +216,37 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     private void buildPath(String endAddress) {
-        Observable<Route> observable = ApiRequest.getInstance().getApi().getPath("vulica Karvata 29a", endAddress, getString(R.string.google_maps_key));
-        Observer<Route> observer = new Observer<Route>() {
+        final List<LatLng> routes = new ArrayList<>();
+        Observable<ResponseObject> observable = ApiRequest.getInstance().getApi().getPath("vulica Karvata 29a", endAddress, getString(R.string.google_maps_key));
+        Observer<ResponseObject> observer = new Observer<ResponseObject>() {
             @Override
             public void onCompleted() {
-                Log.i("!!!!!", "Complete");
+                buildDirection(routes);
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.i("!!!!!", "Error: " + e);
+                Log.i(TAG, "Error: " + e);
             }
 
             @Override
-            public void onNext(Route route) {
-                Log.i("!!!!", "1" + route.getEndAddress());
-                for (int i = 0; i < route.getPoints().size(); i++) {
-                    Log.i("!!!!!", "Long: " + route.getPoints().get(i).longitude);
-                    Log.i("!!!!!", "Lat: " + route.getPoints().get(i).latitude);
-
-                }
+            public void onNext(ResponseObject responseObject) {
+                routes.clear();
+                routes.addAll(DecodePolylines.decodePolylines(responseObject.getRoute().get(0).getPolyline().getPoints()));
             }
         };
         bindObservable(observable, observer);
+    }
+
+    private void buildDirection(List<LatLng> routes) {
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .geodesic(true)
+                .color(Color.BLUE)
+                .width(10f);
+        for (int i = 0; i < routes.size(); i++)
+            polylineOptions.add(routes.get(i));
+
+        mGoogleMap.addPolyline(polylineOptions);
     }
 
     private synchronized void buildGoogleApiClient() {
