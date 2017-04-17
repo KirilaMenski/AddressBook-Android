@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -70,6 +71,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     private GoogleMap mGoogleMap;
 
     private SupportPlaceAutocompleteFragment mAutocompleteFragment;
+    private ProgressDialog mProgressDialog;
 
 
     public static MapFragment newInstance(String name) {
@@ -216,16 +218,19 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     private void buildPath(String endAddress) {
+        mProgressDialog = ProgressDialog.show(getContext(), getString(R.string.query_executed), getString(R.string.wait));
         final List<LatLng> routes = new ArrayList<>();
         Observable<ResponseObject> observable = ApiRequest.getInstance().getApi().getPath("vulica Karvata 29a", endAddress, getString(R.string.google_maps_key));
         Observer<ResponseObject> observer = new Observer<ResponseObject>() {
             @Override
             public void onCompleted() {
+                mProgressDialog.dismiss();
                 buildDirection(routes);
             }
 
             @Override
             public void onError(Throwable e) {
+                mProgressDialog.dismiss();
                 Log.i(TAG, "Error: " + e);
             }
 
