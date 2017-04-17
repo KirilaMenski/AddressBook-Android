@@ -1,4 +1,4 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.fragments;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,27 +30,32 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import by.softteco.addressbook.R;
+import by.softteco.addressbook.api.ApiRequest;
+import by.softteco.addressbook.api.response.Route;
 import by.softteco.addressbook.database.dao.PlaceDao;
 import by.softteco.addressbook.database.daoimpl.PlaceDaoImpl;
 import by.softteco.addressbook.database.entity.PlaceEntity;
+import rx.Observable;
+import rx.Observer;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class MapFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final int LAYOUT = R.layout.fragment_map;
     private final int INTERVAL = 5000;
     private final int FASTEST_INTERVAL = 3000;
     private final int ZOOM = 17;
+    private static final String EXTRA_PLACE_NAME = "by.softteco.addressbook.ui.place_name";
 
     private PlaceDao mPlaceDao;
     private List<PlaceEntity> mPlaceEntities = new ArrayList<>();
+    private String mName;
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
@@ -61,8 +66,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private SupportPlaceAutocompleteFragment mAutocompleteFragment;
 
 
-    public static MapFragment newInstance() {
+    public static MapFragment newInstance(String name) {
         MapFragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        args.putString(EXTRA_PLACE_NAME, name);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -71,6 +79,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT, container, false);
         mPlaceDao = PlaceDaoImpl.getInstance();
+        mName = getArguments().getString(EXTRA_PLACE_NAME);
 
         mAutocompleteFragment = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         mAutocompleteFragment.setOnPlaceSelectedListener(onPlaceSelectedListener);
@@ -175,24 +184,55 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
+                //TODO
                 for (PlaceEntity placeEntity : mPlaceEntities) {
                     if (placeEntity.getName().equals(marker.getSnippet())) {
-                        String msg;
-                        if (mPlaceDao.getPlaceByName(placeEntity.getName()) == null) {
-                            mPlaceDao.addPlace(placeEntity);
-                            msg = getString(R.string.address_was_saved) + placeEntity.getName();
-                        } else {
-                            msg = getString(R.string.already_in_db);
-                        }
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+//                        String msg;
+//                        if (mPlaceDao.getPlaceByName(placeEntity.getName()) == null) {
+//                            mPlaceDao.addPlace(placeEntity);
+//                            msg = getString(R.string.address_was_saved) + placeEntity.getName();
+//                        } else {
+//                            msg = getString(R.string.already_in_db);
+//                        }
+//                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+
+                        buildPath(placeEntity.getName());
+
                     }
                 }
+
                 marker.hideInfoWindow();
             }
         });
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+    }
+
+    private void buildPath(String endAddress) {
+        Observable<Route> observable = ApiRequest.getInstance().getApi().getPath("vulica Karvata 29a", endAddress, getString(R.string.google_maps_key));
+        Observer<Route> observer = new Observer<Route>() {
+            @Override
+            public void onCompleted() {
+                Log.i("!!!!!", "Complete");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.i("!!!!!", "Error: " + e);
+            }
+
+            @Override
+            public void onNext(Route route) {
+                Log.i("!!!!", "1" + route.getEndAddress());
+                for (int i = 0; i < route.getPoints().size(); i++) {
+                    Log.i("!!!!!", "Long: " + route.getPoints().get(i).longitude);
+                    Log.i("!!!!!", "Lat: " + route.getPoints().get(i).latitude);
+
+                }
+            }
+        };
+        bindObservable(observable, observer);
     }
 
     private synchronized void buildGoogleApiClient() {
@@ -213,9 +253,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
 
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (lastLocation != null) {
+        if (lastLocation != null && mName == null) {
             mLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
             moveCamera(mLatLng);
+        }
+        if (mName != null) {
+            PlaceEntity placeEntity = mPlaceDao.getPlaceByName(mName);
+            double lat = placeEntity.getLatitude();
+            double lon = placeEntity.getLongitude();
+
+            moveCamera(new LatLng(lat, lon));
+            createMarker(lat, lon, placeEntity.getName());
         }
 
         mLocationRequest = new LocationRequest();
@@ -256,7 +304,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .anchor(0.5f, 0.5f)
-//                .title(title)
                 .snippet(title)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 

@@ -20,7 +20,7 @@
             android:value="@string/google_maps_key"/>
 
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".ui.activities.SplashActivity"
             android:label="@string/title_activity_maps"
             android:theme="@style/AppTheme.NoActionBar.Splash"
             android:screenOrientation="portrait">
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
     </application>
 

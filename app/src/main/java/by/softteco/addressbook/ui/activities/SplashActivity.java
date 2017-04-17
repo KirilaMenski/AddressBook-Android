@@ -1,4 +1,4 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

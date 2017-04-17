@@ -6,15 +6,6 @@
               android:orientation="vertical"
               android:padding="@dimen/tv_padding">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/view_distance"
-        android:gravity="center"
-        android:text="@string/delete_label"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/tv_size_big"/>
-
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -46,6 +37,18 @@
         android:layout_margin="@dimen/view_distance"
         android:gravity="center"
         android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/show"
+            android:layout_width="@dimen/text_width"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/view_distance"
+            android:background="@drawable/text_background"
+            android:gravity="center"
+            android:padding="@dimen/tv_padding"
+            android:text="@string/show"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/tv_size"/>
 
         <TextView
             android:id="@+id/delete"

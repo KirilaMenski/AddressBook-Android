@@ -1,4 +1,4 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import by.softteco.addressbook.R;
+import by.softteco.addressbook.ui.fragments.AddressListFragment;
+import by.softteco.addressbook.ui.fragments.MapFragment;
 import by.softteco.addressbook.utils.FragmentUtil;
 
 /**
@@ -31,14 +33,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(LAYOUT);
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
-        FragmentUtil.replaceFragment(this, R.id.main_container, MapFragment.newInstance(), false);
+        FragmentUtil.replaceFragment(this, R.id.main_container, MapFragment.newInstance(null), false);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.map:
-                FragmentUtil.replaceFragment(this, R.id.main_container, MapFragment.newInstance(), false);
+                FragmentUtil.replaceFragment(this, R.id.main_container, MapFragment.newInstance(null), false);
                 break;
             case R.id.list:
                 FragmentUtil.replaceFragment(this, R.id.main_container, AddressListFragment.newInstance(), false);
@@ -48,4 +50,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return true;
     }
+
+    public void setNavigationItem(int item) {
+        mBottomNavigationView.getMenu().getItem(item).setChecked(true);
+    }
+
 }

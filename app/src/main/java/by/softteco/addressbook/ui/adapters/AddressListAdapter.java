@@ -1,4 +1,4 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.adapters;
 
 import java.lang.ref.WeakReference;
 import java.util.List;

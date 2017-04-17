@@ -1,10 +1,9 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.fragments;
 
 import java.util.List;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,12 +13,14 @@ import by.softteco.addressbook.R;
 import by.softteco.addressbook.database.dao.PlaceDao;
 import by.softteco.addressbook.database.daoimpl.PlaceDaoImpl;
 import by.softteco.addressbook.database.entity.PlaceEntity;
+import by.softteco.addressbook.ui.adapters.AddressListAdapter;
+import by.softteco.addressbook.ui.dialogs.ActionDialog;
 
 /**
  * Created by kirila on 13.4.17.
  */
 
-public class AddressListFragment extends Fragment implements ActionDialog.DialogListener, AddressListAdapter.AdapterListener {
+public class AddressListFragment extends BaseFragment implements ActionDialog.DialogListener, AddressListAdapter.AdapterListener {
 
     private final int LAYOUT = R.layout.fragment_address_list;
 

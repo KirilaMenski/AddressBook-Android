@@ -1,4 +1,4 @@
-package by.softteco.addressbook.ui;
+package by.softteco.addressbook.ui.dialogs;
 
 import java.lang.ref.WeakReference;
 
@@ -16,6 +16,9 @@ import by.softteco.addressbook.R;
 import by.softteco.addressbook.database.dao.PlaceDao;
 import by.softteco.addressbook.database.daoimpl.PlaceDaoImpl;
 import by.softteco.addressbook.database.entity.PlaceEntity;
+import by.softteco.addressbook.ui.activities.MainActivity;
+import by.softteco.addressbook.ui.fragments.MapFragment;
+import by.softteco.addressbook.utils.FragmentUtil;
 
 /**
  * Created by kirila on 13.4.17.
@@ -31,7 +34,7 @@ public class ActionDialog extends DialogFragment {
     private PlaceDao mPlaceDao;
     private WeakReference<DialogListener> mDialogListener;
 
-    private TextView mName, mCoordinates, mDelete, mCancel;
+    private TextView mName, mCoordinates, mDelete, mCancel, mShow;
 
     public static ActionDialog newInstance(String name, int position) {
         ActionDialog dialog = new ActionDialog();
@@ -48,13 +51,24 @@ public class ActionDialog extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(LAYOUT, null);
         mDialog = new AlertDialog.Builder(getActivity()).setView(view).create();
         mPlaceDao = PlaceDaoImpl.getInstance();
-        final PlaceEntity placeEntity = mPlaceDao.getPlaceByName(getArguments().getString(EXTRA_NAME));
+        final String name = getArguments().getString(EXTRA_NAME);
+        final PlaceEntity placeEntity = mPlaceDao.getPlaceByName(name);
         final int position = getArguments().getInt(EXTRA_POSITION);
 
         mName = (TextView) view.findViewById(R.id.name);
         mName.setText(placeEntity.getName());
         mCoordinates = (TextView) view.findViewById(R.id.coordinates);
         mCoordinates.setText(getString(R.string.coordinates, placeEntity.getLatitude(), placeEntity.getLongitude()));
+
+        mShow = (TextView) view.findViewById(R.id.show);
+        mShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialog.dismiss();
+                ((MainActivity) getActivity()).setNavigationItem(0);
+                FragmentUtil.replaceFragment(getActivity(), R.id.main_container, MapFragment.newInstance(name), false);
+            }
+        });
 
         mDelete = (TextView) view.findViewById(R.id.delete);
         mDelete.setOnClickListener(new View.OnClickListener() {
